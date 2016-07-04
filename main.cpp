@@ -5,6 +5,7 @@ using namespace std;
 
 struct nodo{
 	char ciudad;
+	int color;
 	struct nodo *sgte;
 	struct arista *ady;//puntero hacia la primera arista del nodo
 };
@@ -29,6 +30,7 @@ public:
 	void eliminar_arista(char inicio, char fin);
 	void mostrar_grafo();
 	void mostrar_aristas(char var);
+	void pintar(char ciudad, int color);
 };
 
 void Arbol::insertar_nodo(char ciudad){
@@ -62,7 +64,6 @@ void Arbol::agrega_arista(Tnodo &aux, Tnodo &aux2, Tarista &nuevo){
 			q=q->sgte;
 		nuevo->destino=aux2;
 		q->sgte=nuevo;
-		cout<<"ARISTA AGREGADA...!!!!";
 	}
 
 }
@@ -121,7 +122,6 @@ void Arbol::eliminar_nodo(char ciudad){
 			else {
 				ant->sgte = aux->sgte;
 				delete(aux);
-				cout<<"NODO ELIMINADO...!!!!";
 				return;
 			}
 		}
@@ -209,6 +209,35 @@ void Arbol::mostrar_aristas(char var)
 		}
 		else
 			aux=aux->sgte;
+	}
+}
+void Arbol::pintar(char ciudad, int color){
+	Tnodo aux,ant;
+	aux=p;
+	// Grafo Vacio
+	if(p==NULL){
+		return;
+	}
+	while(aux!=NULL){
+		if(aux->ciudad==ciudad){
+			if(aux->ady!=NULL)
+				vaciar_aristas(aux);
+			if(aux==p){
+				p=p->sgte;
+				aux->color = color;
+				return;
+			}
+			else {
+				ant->sgte = aux->sgte;
+				aux->color = color;
+				return;
+			}
+		}
+		else
+		{
+			ant=aux;
+			aux=aux->sgte;
+		}
 	}
 }
 int main(){
