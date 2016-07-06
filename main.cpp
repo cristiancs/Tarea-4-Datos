@@ -4,7 +4,7 @@ using namespace std;
 
 
 struct nodo{
-	char ciudad;
+	int ciudad;
 	int color;
 	struct nodo *sgte;
 	struct arista *ady;//puntero hacia la primera arista del nodo
@@ -16,28 +16,49 @@ struct arista{
 typedef struct nodo *Tnodo;//  Tipo Nodo
 typedef struct arista *Tarista; //Tipo Arista
 
-class Arbol
+class Grafo
 {
 private:
 		Tnodo p;//puntero cabeza
 public:
-	Arbol();
-	void insertar_nodo(char ciudad);
+	Grafo();
+	~Grafo();
+	void insertar_nodo(int ciudad);
 	void agrega_arista(Tnodo &, Tnodo &, Tarista &);
-	void insertar_arista(char ini, char fin);
+	void insertar_arista(int ini, int fin);
 	void vaciar_aristas(Tnodo &);
-	void eliminar_nodo(char ciudad);
-	void eliminar_arista(char inicio, char fin);
+	void eliminar_nodo(int ciudad);
+	void eliminar_arista(int inicio, int fin);
 	void mostrar_grafo();
-	void mostrar_aristas(char var);
-	void pintar(char ciudad, int color);
+	void mostrar_aristas(int var);
+	void pintar(int ciudad, int color);
 };
-
-void Arbol::insertar_nodo(char ciudad){
+Grafo::Grafo(){
+	p = NULL;
+}
+Grafo::~Grafo(){
+	Tnodo aux,next;
+	aux=p;
+	next = NULL;
+	// Grafo Vacio
+	if(p==NULL){
+		return;
+	}
+	while(aux!=NULL){
+		next = aux->sgte;
+		eliminar_nodo(aux->ciudad);
+		aux=next;
+		// cout<< "borrando"<<endl;
+	}
+	mostrar_grafo();
+	delete(p);
+}
+void Grafo::insertar_nodo(int ciudad){
 	Tnodo t,nuevo=new struct nodo;
 	nuevo->ciudad = ciudad;
 	nuevo->sgte = NULL;
 	nuevo->ady=NULL;
+	nuevo->color=-1;
 // Verificar si hay nodos
 	if(p==NULL){
 		p = nuevo;
@@ -45,14 +66,13 @@ void Arbol::insertar_nodo(char ciudad){
 // Buscar donde lo podemos insertar
 	else{
 		t = p;
-		while(t->sgte!=NULL)
-		{
+		while(t->sgte!=NULL){
 			t = t->sgte;
 		}
 		t->sgte = nuevo;
 	}
 }
-void Arbol::agrega_arista(Tnodo &aux, Tnodo &aux2, Tarista &nuevo){
+void Grafo::agrega_arista(Tnodo &aux, Tnodo &aux2, Tarista &nuevo){
 	Tarista q;
 	if(aux->ady==NULL){
 		aux->ady=nuevo;
@@ -67,7 +87,7 @@ void Arbol::agrega_arista(Tnodo &aux, Tnodo &aux2, Tarista &nuevo){
 	}
 
 }
-void Arbol::insertar_arista(char ini,char fin){
+void Grafo::insertar_arista(int ini,int fin){
 	Tarista nuevo=new struct arista;
 	Tnodo aux, aux2;
 
@@ -92,18 +112,24 @@ void Arbol::insertar_arista(char ini,char fin){
 		aux = aux->sgte;
 	}
 }
-void Arbol::vaciar_aristas(Tnodo &aux)
+void Grafo::vaciar_aristas(Tnodo &aux)
 {
     Tarista q,r;
     q=aux->ady;
-    while(q->sgte!=NULL)
-    {
-        r=q;
-        q=q->sgte;
-        delete(r);
+    if(q->sgte == NULL){
+    	delete(q);
+    }
+    else{
+		while(q->sgte!=NULL){
+	   	//	cout << aux->ciudad << "-" <<q->destino->ciudad << endl;
+	        r=q;
+	        q=q->sgte;
+	        delete(r);
+	   	}
+	   	delete(q);
     }
 }
-void Arbol::eliminar_nodo(char ciudad){
+void Grafo::eliminar_nodo(int ciudad){
 	Tnodo aux,ant;
 	aux=p;
 	// Grafo Vacio
@@ -112,8 +138,9 @@ void Arbol::eliminar_nodo(char ciudad){
 	}
 	while(aux!=NULL){
 		if(aux->ciudad==ciudad){
-			if(aux->ady!=NULL)
+			if(aux->ady!=NULL){
 				vaciar_aristas(aux);
+			}
 			if(aux==p){
 				p=p->sgte;
 				delete(aux);
@@ -132,7 +159,7 @@ void Arbol::eliminar_nodo(char ciudad){
 		}
 	}
 }
-void Arbol::eliminar_arista(char inicio,char fin){
+void Grafo::eliminar_arista(int inicio,int fin){
 	Tnodo aux, aux2;
 	Tarista q,r;
 	aux=p;
@@ -163,13 +190,14 @@ void Arbol::eliminar_arista(char inicio,char fin){
 		aux = aux->sgte;
 	}
 }
-void Arbol::mostrar_grafo(){
+void Grafo::mostrar_grafo(){
 	Tnodo ptr;
 	Tarista ar;
 	ptr=p;
-	cout<<"NODO|LISTA DE ADYACENCIA\n";
+	cout<<"NODO|COLOR|LISTA DE ADYACENCIA|\n";
 	while(ptr!=NULL){
 	   cout<<"   "<<ptr->ciudad<<"|";
+   	   cout<<"   "<<ptr->color<<"|";
 	if(ptr->ady!=NULL)
 	{
 		ar=ptr->ady;
@@ -182,7 +210,7 @@ void Arbol::mostrar_grafo(){
 	cout<<endl;
 	}
 }
-void Arbol::mostrar_aristas(char var)
+void Grafo::mostrar_aristas(int var)
 {
 	Tnodo aux;
 	Tarista ar;
@@ -211,8 +239,8 @@ void Arbol::mostrar_aristas(char var)
 			aux=aux->sgte;
 	}
 }
-void Arbol::pintar(char ciudad, int color){
-	Tnodo aux,ant;
+void Grafo::pintar(int ciudad, int color){
+	Tnodo aux;
 	aux=p;
 	// Grafo Vacio
 	if(p==NULL){
@@ -220,26 +248,39 @@ void Arbol::pintar(char ciudad, int color){
 	}
 	while(aux!=NULL){
 		if(aux->ciudad==ciudad){
-			if(aux->ady!=NULL)
-				vaciar_aristas(aux);
-			if(aux==p){
-				p=p->sgte;
-				aux->color = color;
-				return;
-			}
-			else {
-				ant->sgte = aux->sgte;
-				aux->color = color;
-				return;
-			}
+			aux->color = color;
+			return;
 		}
-		else
-		{
-			ant=aux;
+		else{
 			aux=aux->sgte;
 		}
 	}
 }
 int main(){
+	Grafo G;
+	G.insertar_nodo(1);
+	G.insertar_nodo(2);
+	G.insertar_nodo(3);
+	G.insertar_nodo(4);
+	G.insertar_arista(1,2);
+	// G.insertar_arista(1,3);
+	// G.insertar_arista(1,4);
+	G.insertar_arista(2,1);
+	// G.insertar_arista(2,3);
+	// G.insertar_arista(2,4);
+	G.insertar_arista(3,1);
+	// G.insertar_arista(3,2);
+	// G.insertar_arista(3,4);
+	G.insertar_arista(4,1);
+	// G.insertar_arista(4,2);
+	// G.insertar_arista(4,3);
+
+	G.pintar(2,5);
+	G.pintar(3,5);
+	G.pintar(3,2);
+	G.pintar(1,5);
+	G.mostrar_grafo();
+	G.~Grafo();
+
 	return 0;
 }
