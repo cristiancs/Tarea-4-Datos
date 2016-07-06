@@ -73,11 +73,18 @@ void Grafo::insertar_nodo(int ciudad){
 	}
 // Buscar donde lo podemos insertar
 	else{
+		int flag = false;
 		t = p;
 		while(t->sgte!=NULL){
+			if(t->sgte->ciudad == ciudad){
+				flag = true;
+			}
 			t = t->sgte;
 		}
-		t->sgte = nuevo;
+		if(flag == false && ciudad != 0){
+			cout<< "agregando "<<ciudad << endl;
+			t->sgte = nuevo;
+		}
 	}
 	nVertices+=1;
 }
@@ -338,30 +345,43 @@ int Grafo::next(int ciudad, int posicion){
 
 int main(){
 	Grafo G;
-	G.insertar_nodo(1);
-	G.insertar_nodo(2);
-	G.insertar_nodo(3);
-	G.insertar_nodo(4);
-	G.setEdge(1,2);
-	G.setEdge(1,3);
-	G.setEdge(1,4);
-	G.setEdge(2,1);
-	G.setEdge(2,3);
-	G.setEdge(2,4);
-	G.setEdge(3,1);
-	G.setEdge(3,2);
-	G.setEdge(3,4);
-	G.setEdge(4,1);
-	G.setEdge(4,2);
-	G.setEdge(4,3);
+	int N, // Número de ciudades a trabjar
+	M,     // Cantidad de vuelos entre pares de ciudades que tiene la compañía
+	Q,     // El número de consultas que se harán sobre el grafo
+	i,
+	aux1,
+	aux2;    
+	cin >> N;
+	cin >> M;
 
-	G.setMark(2,5);
-	G.setMark(3,5);
-	G.setMark(3,2);
-	G.setMark(1,5);
-//	G.mostrar_grafo();
-	cout << G.nVertex() << "-" << G.nEdges() << endl;
-	G.~Grafo();
+	// Procesar
+	// Agregar Nodos y Arcos
+	i = 0;
+	while(i < M){
+		cin >> aux1;
+		G.insertar_nodo(aux1);
+		cin >> aux2;
+		G.insertar_nodo(aux2);
+		G.setEdge(aux1,aux2);
+		i++;
+	}
+	G.mostrar_grafo();
+	//Número de consultas a realizar
+	cin >> Q;
+
+	i = 0;
+	while(i < Q){
+		cin >> aux1; // Vertice a trabjar
+		// Buscar vertices no alcanzables desde aux1;
+	}
+
+
+
+	// Salida
+
+	cout << Q << endl;
+
+
 
 	return 0;
 }
