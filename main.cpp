@@ -56,9 +56,7 @@ Grafo::~Grafo(){
 		next = aux->sgte;
 		eliminar_nodo(aux->ciudad);
 		aux=next;
-		// cout<< "borrando"<<endl;
 	}
-	delete(p);
 }
 void Grafo::insertar_nodo(int ciudad){
 	Tnodo t,nuevo=new struct nodo;
@@ -83,6 +81,10 @@ void Grafo::insertar_nodo(int ciudad){
 		if(flag == false && ciudad != 0){
 		//	cout<< "agregando "<<ciudad << endl;
 			t->sgte = nuevo;
+		}
+		else{
+			delete(t);
+			delete(nuevo);
 		}
 	}
 	nVertices+=1;
@@ -136,13 +138,14 @@ void Grafo::vaciar_aristas(Tnodo &aux)
     }
     else{
 		while(q->sgte!=NULL){
-	   	//	cout << aux->ciudad << "-" <<q->destino->ciudad << endl;
 	        r=q;
 	        q=q->sgte;
 	        delete(r);
 	   	}
 	   	delete(q);
     }
+    aux->ady = NULL;
+  //  mostrar_grafo();
 }
 void Grafo::eliminar_nodo(int ciudad){
 	Tnodo aux,ant;
@@ -173,6 +176,7 @@ void Grafo::eliminar_nodo(int ciudad){
 			aux=aux->sgte;
 		}
 	}
+
 	nVertices -=1;
 }
 void Grafo::deleteEdge(int inicio,int fin){
@@ -366,21 +370,22 @@ int main(){
 	}
 	G.mostrar_grafo();
 	//Número de consultas a realizar
-	cin >> Q;
+	// cin >> Q;
 
-	i = 0;
-	while(i < Q){
-		cin >> aux1; // Vertice a trabjar
-		// Buscar vertices no alcanzables desde aux1;
-	}
+	// i = 0;
+	// while(i < Q){
+	// 	cin >> aux1; // Vertice a trabjar
+	// 	// Buscar vertices no alcanzables desde aux1;
+	// }
 
 
 
 	// Salida
 
-	cout << Q << endl;
+	// cout << Q << endl;
 
 
+	G.~Grafo();
 
 	return 0;
 }
