@@ -58,7 +58,6 @@ Grafo::~Grafo(){
 		aux=next;
 		// cout<< "borrando"<<endl;
 	}
-	mostrar_grafo();
 	delete(p);
 }
 void Grafo::insertar_nodo(int ciudad){
@@ -82,7 +81,7 @@ void Grafo::insertar_nodo(int ciudad){
 			t = t->sgte;
 		}
 		if(flag == false && ciudad != 0){
-			cout<< "agregando "<<ciudad << endl;
+		//	cout<< "agregando "<<ciudad << endl;
 			t->sgte = nuevo;
 		}
 	}
