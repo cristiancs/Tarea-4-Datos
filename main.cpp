@@ -83,7 +83,7 @@ void Grafo::insertar_nodo(int ciudad){
 			t->sgte = nuevo;
 		}
 		else{
-			delete(t);
+			// delete(t);
 			delete(nuevo);
 		}
 	}
