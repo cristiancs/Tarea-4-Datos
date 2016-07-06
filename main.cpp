@@ -20,21 +20,29 @@ class Grafo
 {
 private:
 		Tnodo p;//puntero cabeza
+		int nArcos, nVertices;
 public:
 	Grafo();
 	~Grafo();
 	void insertar_nodo(int ciudad);
 	void agrega_arista(Tnodo &, Tnodo &, Tarista &);
-	void insertar_arista(int ini, int fin);
+	void setEdge(int ini, int fin);
 	void vaciar_aristas(Tnodo &);
 	void eliminar_nodo(int ciudad);
-	void eliminar_arista(int inicio, int fin);
+	void deleteEdge(int inicio, int fin);
 	void mostrar_grafo();
 	void mostrar_aristas(int var);
-	void pintar(int ciudad, int color);
+	void setMark(int ciudad, int color);
+	int getMark(int ciudad);
+	int nVertex();
+	int nEdges();
+	int first(int nodo);
+	int next(int nodo, int posicion);
 };
 Grafo::Grafo(){
 	p = NULL;
+	nArcos = 0;
+	nVertices = 0;
 }
 Grafo::~Grafo(){
 	Tnodo aux,next;
@@ -71,6 +79,7 @@ void Grafo::insertar_nodo(int ciudad){
 		}
 		t->sgte = nuevo;
 	}
+	nVertices+=1;
 }
 void Grafo::agrega_arista(Tnodo &aux, Tnodo &aux2, Tarista &nuevo){
 	Tarista q;
@@ -85,9 +94,8 @@ void Grafo::agrega_arista(Tnodo &aux, Tnodo &aux2, Tarista &nuevo){
 		nuevo->destino=aux2;
 		q->sgte=nuevo;
 	}
-
 }
-void Grafo::insertar_arista(int ini,int fin){
+void Grafo::setEdge(int ini,int fin){
 	Tarista nuevo=new struct arista;
 	Tnodo aux, aux2;
 
@@ -111,6 +119,7 @@ void Grafo::insertar_arista(int ini,int fin){
 		}
 		aux = aux->sgte;
 	}
+	nArcos+=1;
 }
 void Grafo::vaciar_aristas(Tnodo &aux)
 {
@@ -158,8 +167,9 @@ void Grafo::eliminar_nodo(int ciudad){
 			aux=aux->sgte;
 		}
 	}
+	nVertices -=1;
 }
-void Grafo::eliminar_arista(int inicio,int fin){
+void Grafo::deleteEdge(int inicio,int fin){
 	Tnodo aux, aux2;
 	Tarista q,r;
 	aux=p;
@@ -189,6 +199,7 @@ void Grafo::eliminar_arista(int inicio,int fin){
 		}
 		aux = aux->sgte;
 	}
+	nArcos-=1;
 }
 void Grafo::mostrar_grafo(){
 	Tnodo ptr;
@@ -239,7 +250,7 @@ void Grafo::mostrar_aristas(int var)
 			aux=aux->sgte;
 	}
 }
-void Grafo::pintar(int ciudad, int color){
+void Grafo::setMark(int ciudad, int color){
 	Tnodo aux;
 	aux=p;
 	// Grafo Vacio
@@ -256,29 +267,98 @@ void Grafo::pintar(int ciudad, int color){
 		}
 	}
 }
+int Grafo::getMark(int ciudad){
+	Tnodo aux;
+	aux=p;
+	// Grafo Vacio
+	if(p==NULL){
+		return -1;
+	}
+	while(aux!=NULL){
+		if(aux->ciudad==ciudad){
+			return aux->color;
+		}
+		else{
+			aux=aux->sgte;
+		}
+	}
+	return -1;
+}
+int Grafo::nVertex(){
+	return nVertices;
+}
+int Grafo::nEdges(){
+	return nArcos;
+}
+int Grafo::first(int ciudad){
+	Tnodo aux;
+	aux=p;
+	// Grafo Vacio
+	if(p==NULL){
+		return -1;
+	}
+	while(aux!=NULL){
+		if(aux->ciudad==ciudad){
+
+			return aux->ady->destino->ciudad;
+		}
+		else{
+			aux=aux->sgte;
+		}
+	}
+	return -1;
+}
+int Grafo::next(int ciudad, int posicion){
+	Tnodo aux;
+	Tarista ar;
+	aux=p;
+	// Grafo Vacio
+	if(p==NULL){
+		return -1;
+	}
+	while(aux!=NULL){
+		if(aux->ciudad==ciudad){
+			ar=aux->ady;
+			int i = 0;
+			while(ar!=NULL){
+				if(i == posicion){
+					return ar->destino->ciudad;
+				}
+				ar=ar->sgte;
+				i++;
+			}
+		}
+		else{
+			aux=aux->sgte;
+		}
+	}
+	return -1;
+}
+
+
 int main(){
 	Grafo G;
 	G.insertar_nodo(1);
 	G.insertar_nodo(2);
 	G.insertar_nodo(3);
 	G.insertar_nodo(4);
-	G.insertar_arista(1,2);
-	// G.insertar_arista(1,3);
-	// G.insertar_arista(1,4);
-	G.insertar_arista(2,1);
-	// G.insertar_arista(2,3);
-	// G.insertar_arista(2,4);
-	G.insertar_arista(3,1);
-	// G.insertar_arista(3,2);
-	// G.insertar_arista(3,4);
-	G.insertar_arista(4,1);
-	// G.insertar_arista(4,2);
-	// G.insertar_arista(4,3);
+	G.setEdge(1,2);
+	// G.setEdge(1,3);
+	// G.setEdge(1,4);
+	G.setEdge(2,1);
+	// G.setEdge(2,3);
+	// G.setEdge(2,4);
+	G.setEdge(3,1);
+	// G.setEdge(3,2);
+	// G.setEdge(3,4);
+	G.setEdge(4,1);
+	// G.setEdge(4,2);
+	// G.setEdge(4,3);
 
-	G.pintar(2,5);
-	G.pintar(3,5);
-	G.pintar(3,2);
-	G.pintar(1,5);
+	G.setMark(2,5);
+	G.setMark(3,5);
+	G.setMark(3,2);
+	G.setMark(1,5);
 	G.mostrar_grafo();
 	G.~Grafo();
 
