@@ -94,6 +94,7 @@ void Grafo::agrega_arista(Tnodo &aux, Tnodo &aux2, Tarista &nuevo){
 		nuevo->destino=aux2;
 		q->sgte=nuevo;
 	}
+	nArcos+=1;
 }
 void Grafo::setEdge(int ini,int fin){
 	Tarista nuevo=new struct arista;
@@ -119,7 +120,6 @@ void Grafo::setEdge(int ini,int fin){
 		}
 		aux = aux->sgte;
 	}
-	nArcos+=1;
 }
 void Grafo::vaciar_aristas(Tnodo &aux)
 {
@@ -343,23 +343,24 @@ int main(){
 	G.insertar_nodo(3);
 	G.insertar_nodo(4);
 	G.setEdge(1,2);
-	// G.setEdge(1,3);
-	// G.setEdge(1,4);
+	G.setEdge(1,3);
+	G.setEdge(1,4);
 	G.setEdge(2,1);
-	// G.setEdge(2,3);
-	// G.setEdge(2,4);
+	G.setEdge(2,3);
+	G.setEdge(2,4);
 	G.setEdge(3,1);
-	// G.setEdge(3,2);
-	// G.setEdge(3,4);
+	G.setEdge(3,2);
+	G.setEdge(3,4);
 	G.setEdge(4,1);
-	// G.setEdge(4,2);
-	// G.setEdge(4,3);
+	G.setEdge(4,2);
+	G.setEdge(4,3);
 
 	G.setMark(2,5);
 	G.setMark(3,5);
 	G.setMark(3,2);
 	G.setMark(1,5);
-	G.mostrar_grafo();
+//	G.mostrar_grafo();
+	cout << G.nVertex() << "-" << G.nEdges() << endl;
 	G.~Grafo();
 
 	return 0;
