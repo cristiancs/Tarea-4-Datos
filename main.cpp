@@ -342,7 +342,7 @@ int Grafo::next(int ciudad, int posicion){
 			aux=aux->sgte;
 		}
 	}
-	return -1;
+	return nVertex();
 }
 
 
