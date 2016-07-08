@@ -36,6 +36,7 @@ public:
 	int getMark(int ciudad);
 	int nVertex();
 	int nEdges();
+	int getElement(int posicion);
 	int first(int nodo);
 	int next(int nodo, int posicion);
 };
@@ -79,6 +80,7 @@ void Grafo::insertar_nodo(int ciudad){
 			t = t->sgte;
 		}
 		if(flag == false && ciudad != 0){
+			nVertices+=1;
 		//	cout<< "agregando "<<ciudad << endl;
 			t->sgte = nuevo;
 		}
@@ -87,7 +89,6 @@ void Grafo::insertar_nodo(int ciudad){
 			delete(nuevo);
 		}
 	}
-	nVertices+=1;
 }
 void Grafo::agrega_arista(Tnodo &aux, Tnodo &aux2, Tarista &nuevo){
 	Tarista q;
@@ -294,8 +295,27 @@ int Grafo::getMark(int ciudad){
 	}
 	return -1;
 }
+int Grafo::getElement(int posicion){
+	Tnodo aux;
+	aux=p;
+	// Grafo Vacio
+	if(p==NULL){
+		return -1;
+	}
+	int i = 0;
+	while(aux!=NULL){
+		if(i == posicion){
+			return aux->ciudad;
+		}
+		else{
+			aux=aux->sgte;
+		}
+		i++;
+	}
+	return -1;
+}
 int Grafo::nVertex(){
-	return nVertices;
+	return nVertices+1;
 }
 int Grafo::nEdges(){
 	return nArcos;
@@ -309,19 +329,22 @@ int Grafo::first(int ciudad){
 	}
 	while(aux!=NULL){
 		if(aux->ciudad==ciudad){
-
+			if(aux->ady == NULL){
+				return nVertex();
+			}
 			return aux->ady->destino->ciudad;
 		}
 		else{
 			aux=aux->sgte;
 		}
 	}
-	return -1;
+	return nVertex();
 }
 int Grafo::next(int ciudad, int posicion){
 	Tnodo aux;
 	Tarista ar;
 	aux=p;
+	// cout << "Solicitada posición "<< posicion << endl;
 	// Grafo Vacio
 	if(p==NULL){
 		return -1;
@@ -329,14 +352,17 @@ int Grafo::next(int ciudad, int posicion){
 	while(aux!=NULL){
 		if(aux->ciudad==ciudad){
 			ar=aux->ady;
-			int i = 0;
+			int i = 1;
+			//cout << "Interacion"<<endl;
 			while(ar!=NULL){
+			//	cout << i << posicion << endl;
 				if(i == posicion){
 					return ar->destino->ciudad;
 				}
 				ar=ar->sgte;
 				i++;
 			}
+			return nVertex();
 		}
 		else{
 			aux=aux->sgte;
@@ -345,7 +371,24 @@ int Grafo::next(int ciudad, int posicion){
 	return nVertex();
 }
 
-
+int compare (const void * a, const void * b)
+{
+  return ( *(int*)a - *(int*)b );
+}
+void DFS(Grafo *G,int aux1,int *w,int *cvert, int pintura){
+	*cvert = 0;
+	int cvert2 = 0;
+	// cout << "Recibido el elemento "<< aux1 << endl;
+	for(*w= G->first(aux1); *w< G->nVertex(); *w = G->next(aux1,*cvert)){
+		// cout << "Iterando sobre "<< *w <<endl;
+		G->setMark(*w,pintura);
+		(*cvert)++;
+		if(G->first(*w) != G->nVertex())
+		{
+			DFS(G,*w, w, &cvert2, pintura);
+		}
+	}
+}
 int main(){
 	Grafo G;
 	int N, // Número de ciudades a trabjar
@@ -368,21 +411,45 @@ int main(){
 		G.setEdge(aux1,aux2);
 		i++;
 	}
-	G.mostrar_grafo();
-	//Número de consultas a realizar
-	// cin >> Q;
+	cin >> Q;
+	i = 0;
+	int w;
+	int cvert=0;
+	// cout << G.nVertex();
+	cout<<Q<<endl; // Primera Linea salida
+	while(i < Q){
+		cin >> aux1; // Vertice a trabjar
+		// cout << "Elemento " << aux1 << endl;
+		// Buscar vertices no alcanzables desde aux1;
+		//vertices que llego desde aux1;
+		DFS(&G,aux1,&w,&cvert,aux1);
+		
+			// G.mostrar_grafo();
 
-	// i = 0;
-	// while(i < Q){
-	// 	cin >> aux1; // Vertice a trabjar
-	// 	// Buscar vertices no alcanzables desde aux1;
-	// }
-
-
-
-	// Salida
-
-	// cout << Q << endl;
+		
+		//recorrer grafo y ver si esta marcado;
+		int noalcanzables[G.nVertex()];
+		cvert = 0;
+		for (w=0; w<G.nVertex(); w++){
+			// cout << "Analizando : "<<G.getElement(w) << endl;
+			if (G.getMark(G.getElement(w))!=aux1 && G.getElement(w) != aux1){
+				noalcanzables[cvert] = G.getElement(w);
+				cvert++;
+			}
+		}
+		// G.mostrar_grafo();
+		cout << cvert<< " ";
+		qsort(noalcanzables, cvert, sizeof(int), compare);
+		// cout<<"pico"<<cvert;
+		for (w=0; w<cvert; w++){
+			if (G.getMark(w)!=Q){
+				cout<<noalcanzables[w]<<" ";
+			}
+		}
+		cout << endl;
+	
+		i++;
+	 }
 
 
 	G.~Grafo();
